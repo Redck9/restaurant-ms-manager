@@ -1,0 +1,127 @@
+package com.redck.restaurantmsmanager.web_rest;
+
+import com.redck.restaurantmsmanager.domain.Table;
+import com.redck.restaurantmsmanager.service.TableService;
+import com.redck.restaurantmsmanager.service.mapper.TableMapper;
+import com.redck.restaurantmsmanager.service.model.ChairDTO;
+import com.redck.restaurantmsmanager.service.model.TableDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class TableController implements ApiController
+{
+
+    private static final String TABLE_TABLE_ID = "/table/{tableUid}";
+    private static final String TABLE = "/table";
+
+    private static final String TABLE_RESTAURANT_ID = "/restaurant/{restaurantUid}/tables";
+    private final TableService tableService;
+
+    private final TableMapper tableMapper;
+
+
+    /**
+     * Constructor for Table Controller
+     *
+     * @param tableService     Table Service
+     * @param tableMapper      Table Mapper
+     */
+    public TableController(TableService tableService, TableMapper tableMapper) {
+        this.tableService = tableService;
+        this.tableMapper = tableMapper;
+    }
+
+    /**
+     * Controller to get a tableDTO by uid
+     * @param tableId tableDTO uid to get
+     * @return tableDTO with the provided uid
+     */
+    @GetMapping(value = TABLE_TABLE_ID,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<TableDTO> getTable(@PathVariable final String tableId)
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
+                tableService.getTable(tableId)));
+    }
+
+    /**
+     * Controller to create a tableDTO
+     * @param tableDTO tableDTO to create
+     * @return tableDTO created
+     */
+    @PostMapping(value = TABLE,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<TableDTO> createTable(@RequestBody final TableDTO tableDTO)
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
+                tableService.createTable(tableMapper.mapTableDTOToTable(tableDTO))));
+    }
+
+    /**
+     * Controller to edit a tableDTO by uid
+     * @param tableId tableDTO uid to be edited
+     * @param tableToEdit tableDTO update
+     * @return tableDTO edited
+     */
+    @PutMapping(value = TABLE_TABLE_ID,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<TableDTO> editTable(@PathVariable final String tableId, @RequestBody final Table tableToEdit)
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
+                tableService.editTable(tableId, tableToEdit)));
+    }
+
+    /**
+     * Controller to delete tableDTO by uid
+     * @param tableId tableDTO uid to be deleted
+     * @return TableDTO deleted
+     */
+    @DeleteMapping(value = TABLE_TABLE_ID,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<TableDTO> deleteTable(@PathVariable final String tableId)
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
+                tableService.deleteTable(tableId)));
+    }
+
+    /**
+     * Controller to get a list with all tableDTO
+     * @return tableDTO list
+     */
+    @GetMapping(value = TABLE,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<List<TableDTO>> getAllTables()
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableListToTableDTOList(
+                tableService.getAllTables()));
+    }
+
+    /**
+     * Controller to get a list with all tableDTO from RestaurantDTO
+     * @param restaurantUid restaurantUid
+     * @return tableDTO list
+     */
+    @GetMapping(value = TABLE_RESTAURANT_ID,
+            produces = {"application/json"},
+            consumes = {"application/json"})
+    ResponseEntity<List<TableDTO>> getAllTablesFromRestaurant(@PathVariable final String restaurantUid)
+    {
+
+        return ResponseEntity.ok(tableMapper.mapTableListToTableDTOList(
+                tableService.getAllTablesFromRestaurant(restaurantUid)));
+    }
+
+}
