@@ -13,7 +13,7 @@ import java.util.List;
 public class ChairController implements ApiController
 {
 
-    private static final String CHAIR_CHAIR_ID = "/chair/{chairId}";
+    private static final String CHAIR_CHAIR_ID = "/chair/{chairUid}";
     private static final String CHAIR = "/chair";
 
     private static final String CHAIR_TABLE_ID = "/table/{tableUid}/chairs";
@@ -35,17 +35,16 @@ public class ChairController implements ApiController
 
     /**
      * Controller to get a chairDTO by uid
-     * @param chairId chairDTO uid to get
+     * @param chairUid chairDTO uid to get
      * @return chairDTO with the provided uid
      */
     @GetMapping(value = CHAIR_CHAIR_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<ChairDTO> getChair(@PathVariable final String chairId)
+            produces = {"application/json"})
+    ResponseEntity<ChairDTO> getChair(@PathVariable final String chairUid)
     {
 
         return ResponseEntity.ok(chairMapper.mapChairToChairDTO(
-                chairService.getChair(chairId)));
+                chairService.getChair(chairUid)));
     }
 
     /**
@@ -65,33 +64,32 @@ public class ChairController implements ApiController
 
     /**
      * Controller to edit a chairDTO by uid
-     * @param chairId chairDTO uid to be edited
+     * @param chairUid chairDTO uid to be edited
      * @param chairToEdit chairDTO update
      * @return chairDTO edited
      */
     @PutMapping(value = CHAIR_CHAIR_ID,
             produces = {"application/json"},
             consumes = {"application/json"})
-    ResponseEntity<ChairDTO> editChair(@PathVariable final String chairId, @RequestBody final Chair chairToEdit)
+    ResponseEntity<ChairDTO> editChair(@PathVariable final String chairUid, @RequestBody final ChairDTO chairToEdit)
     {
 
         return ResponseEntity.ok(chairMapper.mapChairToChairDTO(
-                chairService.editChair(chairId, chairToEdit)));
+                chairService.editChair(chairUid, chairMapper.mapChairDTOToChair(chairToEdit))));
     }
 
     /**
      * Controller to delete chairDTO by uid
-     * @param chairId chairDTO uid to be deleted
+     * @param chairUid chairDTO uid to be deleted
      * @return ChairDTO deleted
      */
     @DeleteMapping(value = CHAIR_CHAIR_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<ChairDTO> deleteChair(@PathVariable final String chairId)
+            produces = {"application/json"})
+    ResponseEntity<ChairDTO> deleteChair(@PathVariable final String chairUid)
     {
 
         return ResponseEntity.ok(chairMapper.mapChairToChairDTO(
-                chairService.deleteChair(chairId)));
+                chairService.deleteChair(chairUid)));
     }
 
     /**
@@ -99,8 +97,7 @@ public class ChairController implements ApiController
      * @return chairDTO list
      */
     @GetMapping(value = CHAIR,
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<ChairDTO>> getAllChairs()
     {
 
@@ -114,8 +111,7 @@ public class ChairController implements ApiController
      * @return chairDTO list
      */
     @GetMapping(value = CHAIR_TABLE_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<ChairDTO>> getAllChairsFromTable(@PathVariable final String tableUid)
     {
 

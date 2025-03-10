@@ -79,52 +79,89 @@ public class TableService
 
     /**
      * Get Table
-     * @param tableId table id.
+     * @param tableUid table id.
      * @return table retrieved
      */
-    public Table getTable(final String tableId)
+    public Table getTable(final String tableUid)
     {
-        final Optional<Table> tableOptional = getTableById(tableId, "Table does not exists!!");
+        final Optional<Table> tableOptional = getTableById(tableUid, "Table does not exists!!");
 
         LOGGER.info(MDC.get("correlationId"), Arrays.asList(LogTag.TABLES, LogTag.RETRIEVED),
-                "Get Table by id: " + tableId);
+                "Get Table by id: " + tableUid);
 
         return tableOptional.get();
     }
 
     /**
      * Edit Table.
-     * @param tableId table id
+     * @param tableUid table id
      * @param tableNew table new
      * @return table edited
      */
-    public Table editTable(final String tableId, final Table tableNew)
+    public Table editTable(final String tableUid, final Table tableNew)
     {
-        final Optional<Table> tableOptional = getTableById(tableId,
+        final Optional<Table> tableOptional = getTableById(tableUid,
                 "Table to be edited not exists!!!");
 
         LOGGER.info(MDC.get("correlationId"),  Arrays.asList(LogTag.TABLES, LogTag.EDITED),
-                "Edit Table by id " + tableId);
+                "Edit Table by id " + tableUid);
+
+
+        if(tableNew.getChairsCapacity() == 0)
+        {
+            tableNew.chairsCapacity(tableOptional.get().getChairsCapacity());
+        }
+
+        if(tableNew.getxPosition() == 0)
+        {
+            tableNew.xPosition(tableOptional.get().getxPosition());
+        }
+
+        if(tableNew.getyPosition() == 0)
+        {
+            tableNew.yPosition(tableOptional.get().getyPosition());
+        }
+
+        if(tableNew.getAngle() == 0)
+        {
+            tableNew.angle(tableOptional.get().getAngle());
+        }
+
+        if(tableNew.getWidth() == 0)
+        {
+            tableNew.width(tableOptional.get().getWidth());
+        }
+
+        if(tableNew.getHeight() == 0)
+        {
+            tableNew.height(tableOptional.get().getHeight());
+        }
 
         tableOptional.get()
-                .chairsCapacity(tableNew.getChairsCapacity());
+                .chairsCapacity(tableNew.getChairsCapacity())
+                .xPosition(tableNew.getxPosition())
+                .yPosition(tableNew.getyPosition())
+                .angle(tableNew.getAngle())
+                .width(tableNew.getWidth())
+                .height(tableNew.getHeight());
+
 
         return tableRepository.save(tableOptional.get());
     }
 
     /**
      * Delete Table
-     * @param tableId table id
+     * @param tableUid table id
      * @return table deleted
      */
-    public Table deleteTable(final String tableId)
+    public Table deleteTable(final String tableUid)
     {
-        final Optional<Table> tableOptional = getTableById(tableId, "Table to be deleted not exists!!");
+        final Optional<Table> tableOptional = getTableById(tableUid, "Table to be deleted not exists!!");
 
         tableRepository.delete(tableOptional.get());
 
         LOGGER.info(MDC.get("correlationId"), Arrays.asList(LogTag.TABLES, LogTag.DELETED),
-                "Delete Table by id: " + tableId);
+                "Delete Table by id: " + tableUid);
 
         return tableOptional.get();
     }
@@ -167,13 +204,13 @@ public class TableService
 
     /**
      * Find Table on Repository
-     * @param tableId table Uid.
+     * @param tableUid table Uid.
      * @param exceptionMessage exception Message
      * @return Optional of Table
      */
-    private Optional<Table> getTableById(final String tableId, final String exceptionMessage)
+    private Optional<Table> getTableById(final String tableUid, final String exceptionMessage)
     {
-        final Optional<Table> tableOptional = tableRepository.findByTableUid(tableId);
+        final Optional<Table> tableOptional = tableRepository.findByTableUid(tableUid);
         if(tableOptional.isEmpty())
         {
             throw new NullPointerException(exceptionMessage);

@@ -56,6 +56,11 @@ public class ChairService
                 LOGGER.info(MDC.get("correlationId"), Arrays.asList(LogTag.CHAIRS, LogTag.PERSISTED),
                         "Create Chair: " + chair.toString());
 
+                if(chair.isOccupied() == null)
+                {
+                    chair.occupied(false);
+                }
+
                 return chairRepository.save(chair);
             }
             else
@@ -74,53 +79,82 @@ public class ChairService
 
     /**
      * Get Chair
-     * @param chairId chair id.
+     * @param chairUid chair id.
      * @return chair retrieved
      */
-    public Chair getChair(final String chairId)
+    public Chair getChair(final String chairUid)
     {
-        final Optional<Chair> chairOptional = getChairById(chairId, "Chair does not exists!!");
+        final Optional<Chair> chairOptional = getChairById(chairUid, "Chair does not exists!!");
 
         LOGGER.info(MDC.get("correlationId"), Arrays.asList(LogTag.CHAIRS, LogTag.RETRIEVED),
-                "Get Chair by id: " + chairId);
+                "Get Chair by id: " + chairUid);
 
         return chairOptional.get();
     }
 
     /**
      * Edit Chair.
-     * @param chairId chair id
+     * @param chairUid chair id
      * @param chairNew chair new
      * @return chair edited
      */
-    public Chair editChair(final String chairId, final Chair chairNew)
+    public Chair editChair(final String chairUid, final Chair chairNew)
     {
-        final Optional<Chair> chairOptional = getChairById(chairId,
+        final Optional<Chair> chairOptional = getChairById(chairUid,
                 "Chair to be edited not exists!!!");
 
         LOGGER.info(MDC.get("correlationId"),  Arrays.asList(LogTag.CHAIRS, LogTag.EDITED),
-                "Edit Chair by id " + chairId);
+                "Edit Chair by id " + chairUid);
+
+        if(chairNew.getTableUid() == null)
+        {
+            chairNew.tableUid(chairOptional.get().getTableUid());
+        }
+
+        if(chairNew.isOccupied() == null)
+        {
+            chairNew.occupied(chairOptional.get().isOccupied());
+        }
+
+        if(chairNew.getxPosition() == 0)
+        {
+            chairNew.xPosition(chairOptional.get().getxPosition());
+        }
+
+        if(chairNew.getyPosition() == 0)
+        {
+            chairNew.yPosition(chairOptional.get().getyPosition());
+        }
+
+        if(chairNew.getAngle() == 0)
+        {
+            chairNew.angle(chairOptional.get().getAngle());
+        }
 
         chairOptional.get()
                 .tableUid(chairNew.getTableUid())
-                .occupied(chairNew.isOccupied());
+                .occupied(chairNew.isOccupied())
+                .xPosition(chairNew.getxPosition())
+                .yPosition(chairNew.getyPosition())
+                .angle(chairNew.getAngle());
+
 
         return chairRepository.save(chairOptional.get());
     }
 
     /**
      * Delete Chair
-     * @param chairId chair id
+     * @param chairUid chair id
      * @return chair deleted
      */
-    public Chair deleteChair(final String chairId)
+    public Chair deleteChair(final String chairUid)
     {
-        final Optional<Chair> chairOptional = getChairById(chairId, "Chair to be deleted not exists!!");
+        final Optional<Chair> chairOptional = getChairById(chairUid, "Chair to be deleted not exists!!");
 
         chairRepository.delete(chairOptional.get());
 
         LOGGER.info(MDC.get("correlationId"), Arrays.asList(LogTag.CHAIRS, LogTag.DELETED),
-                "Delete Chair by id: " + chairId);
+                "Delete Chair by id: " + chairUid);
 
         return chairOptional.get();
     }
@@ -163,13 +197,13 @@ public class ChairService
 
     /**
      * Find Chair on Repository
-     * @param chairId chair Uid.
+     * @param chairUid chair Uid.
      * @param exceptionMessage exception Message
      * @return Optional of Chair
      */
-    private Optional<Chair> getChairById(final String chairId, final String exceptionMessage)
+    private Optional<Chair> getChairById(final String chairUid, final String exceptionMessage)
     {
-        final Optional<Chair> chairOptional = chairRepository.findByChairUid(chairId);
+        final Optional<Chair> chairOptional = chairRepository.findByChairUid(chairUid);
         if(chairOptional.isEmpty())
         {
             throw new NullPointerException(exceptionMessage);

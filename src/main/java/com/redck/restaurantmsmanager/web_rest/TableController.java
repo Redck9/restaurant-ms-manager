@@ -36,17 +36,16 @@ public class TableController implements ApiController
 
     /**
      * Controller to get a tableDTO by uid
-     * @param tableId tableDTO uid to get
+     * @param tableUid tableDTO uid to get
      * @return tableDTO with the provided uid
      */
     @GetMapping(value = TABLE_TABLE_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<TableDTO> getTable(@PathVariable final String tableId)
+            produces = {"application/json"})
+    ResponseEntity<TableDTO> getTable(@PathVariable final String tableUid)
     {
 
         return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
-                tableService.getTable(tableId)));
+                tableService.getTable(tableUid)));
     }
 
     /**
@@ -66,33 +65,32 @@ public class TableController implements ApiController
 
     /**
      * Controller to edit a tableDTO by uid
-     * @param tableId tableDTO uid to be edited
+     * @param tableUid tableDTO uid to be edited
      * @param tableToEdit tableDTO update
      * @return tableDTO edited
      */
     @PutMapping(value = TABLE_TABLE_ID,
             produces = {"application/json"},
             consumes = {"application/json"})
-    ResponseEntity<TableDTO> editTable(@PathVariable final String tableId, @RequestBody final Table tableToEdit)
+    ResponseEntity<TableDTO> editTable(@PathVariable final String tableUid, @RequestBody final TableDTO tableToEdit)
     {
 
         return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
-                tableService.editTable(tableId, tableToEdit)));
+                tableService.editTable(tableUid, tableMapper.mapTableDTOToTable(tableToEdit))));
     }
 
     /**
      * Controller to delete tableDTO by uid
-     * @param tableId tableDTO uid to be deleted
+     * @param tableUid tableDTO uid to be deleted
      * @return TableDTO deleted
      */
     @DeleteMapping(value = TABLE_TABLE_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
-    ResponseEntity<TableDTO> deleteTable(@PathVariable final String tableId)
+            produces = {"application/json"})
+    ResponseEntity<TableDTO> deleteTable(@PathVariable final String tableUid)
     {
 
         return ResponseEntity.ok(tableMapper.mapTableToTableDTO(
-                tableService.deleteTable(tableId)));
+                tableService.deleteTable(tableUid)));
     }
 
     /**
@@ -100,8 +98,7 @@ public class TableController implements ApiController
      * @return tableDTO list
      */
     @GetMapping(value = TABLE,
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<TableDTO>> getAllTables()
     {
 
@@ -115,8 +112,7 @@ public class TableController implements ApiController
      * @return tableDTO list
      */
     @GetMapping(value = TABLE_RESTAURANT_ID,
-            produces = {"application/json"},
-            consumes = {"application/json"})
+            produces = {"application/json"})
     ResponseEntity<List<TableDTO>> getAllTablesFromRestaurant(@PathVariable final String restaurantUid)
     {
 
